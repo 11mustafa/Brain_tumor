@@ -20,6 +20,14 @@ interface ScanResult {
   confidence: number;
   danger: boolean;
   symptoms: string;
+  gradcam_red?: string;
+  gradcam_jet?: string;
+  localization?: {
+    quadrant?: string;
+    coverage_pct?: number;
+    max_activation?: number;
+    has_focal_tumor?: boolean;
+  };
 }
 
 function Brand() {
@@ -131,7 +139,10 @@ function Analysis({ onComplete }: { onComplete: (result: ScanResult) => void }) 
         prediction: data.prediction || (data.is_tumor ? "Result: Brain Tumor" : "Result: Normal"),
         confidence: Math.round(data.confidence || 95),
         danger: !!data.is_tumor,
-        symptoms: data.symptoms || ""
+        symptoms: data.symptoms || "",
+        gradcam_red: data.gradcam_red,
+        gradcam_jet: data.gradcam_jet,
+        localization: data.localization
       });
     } catch (err: any) {
       console.warn("API request failed, providing local prediction fallback:", err);
@@ -166,9 +177,69 @@ function Analysis({ onComplete }: { onComplete: (result: ScanResult) => void }) 
 function ConfidenceRing({ value }: { value: number }) { const r = 61, c = 2 * Math.PI * r; return <div className="confidence-ring"><svg viewBox="0 0 150 150" aria-label={`${value}% classification confidence`}><circle className="ring-track" cx="75" cy="75" r={r} /><motion.circle className="ring-value" cx="75" cy="75" r={r} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - value / 100) }} transition={{ duration: 1.2 }} style={{ strokeDasharray: c }} /></svg><div><b>{value}%</b><span>CONFIDENCE</span></div></div>; }
 
 function Result({ scan, onNavigate }: { scan: ScanResult; onNavigate: (p: Page) => void }) {
-  const { image, name, prediction, confidence, danger, symptoms } = scan;
+  const { image, name, prediction, confidence, danger, symptoms, gradcam_red, gradcam_jet, localization } = scan;
+  const [viewMode, setViewMode] = useState<"red" | "jet" | "orig">(danger && gradcam_red ? "red" : "orig");
+
+  const activeImage = viewMode === "red" && gradcam_red ? gradcam_red : (viewMode === "jet" && gradcam_jet ? gradcam_jet : (image || "/images/neuroscan-hero.jpg"));
+
   return <main className="page-main section-shell"><div className="report-heading"><PageHeading kicker="ANALYSIS COMPLETE / REPORT" title="AI analysis report" text="Classification output from the NeuroScan demonstration pipeline." /><div className="complete-badge"><CheckCircle2 /> Processing complete</div></div><div className="result-layout">
-    <motion.section className="viewer-panel glass-panel" {...reveal}><div className="panel-heading"><div><span>PROCESSED IMAGE</span><h2>MRI scan viewer</h2></div><div className="viewer-code">NS · 01</div></div><div className="scanner-viewport"><img src={image || "/images/neuroscan-hero.jpg"} alt="Processed brain MRI scan" /><div className="scanner-grid" /><div className="scanner-line" /><i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" /></div><div className="viewer-meta"><span><b>FILE</b>{name || "MRI scan"}</span><span><b>PIPELINE</b>CNN Classification</span><span><b>STATUS</b><i /> Processed</span></div></motion.section>
+    <motion.section className="viewer-panel glass-panel" {...reveal}>
+      <div className="panel-heading"><div><span>PROCESSED IMAGE</span><h2>MRI scan viewer</h2></div><div className="viewer-code">NS · 01</div></div>
+      
+      <div className="gradcam-view-bar" style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        {gradcam_red && (
+          <button type="button" className={`view-btn ${viewMode === "red" ? "active" : ""}`} onClick={() => setViewMode("red")}>
+            <span className="btn-dot dot-red" /> Tumor Focus (Red)
+          </button>
+        )}
+        {gradcam_jet && (
+          <button type="button" className={`view-btn ${viewMode === "jet" ? "active" : ""}`} onClick={() => setViewMode("jet")}>
+            <span className="btn-dot dot-jet" /> Heatmap Spectrum
+          </button>
+        )}
+        <button type="button" className={`view-btn ${viewMode === "orig" ? "active" : ""}`} onClick={() => setViewMode("orig")}>
+          <span className="btn-dot dot-orig" /> Original MRI
+        </button>
+      </div>
+
+      <div className="scanner-viewport">
+        <img src={activeImage} alt="Processed brain MRI scan" />
+        {danger && gradcam_red && viewMode === "red" && (
+          <div className="gradcam-badge-tag red-tag" style={{ position: "absolute", top: 12, left: 12 }}>
+            <span className="pulse-circle" /> GRAD-CAM: TUMOR AREA LOCALIZED (RED)
+          </div>
+        )}
+        <div className="scanner-grid" /><div className="scanner-line" /><i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" />
+      </div>
+
+      <div className="gradcam-info-card" style={{ marginTop: 14 }}>
+        <div className="xai-header" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--accent-cyan)", marginBottom: 4 }}>
+          <BrainCircuit size={16} />
+          <h4 style={{ margin: 0, fontSize: 12 }}>Grad-CAM Explainable AI Localization</h4>
+        </div>
+        <p style={{ fontSize: 11, color: "var(--neutral-400)", margin: "4px 0 8px" }}>
+          Feature activations backpropagated from MobileNetV2 last convolutional layer highlight the exact focal tumor mass.
+        </p>
+        {danger ? (
+          <div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+              <span className="legend-chip chip-red"><i className="legend-swatch red-swatch" /> Red: Identified Tumor Focus</span>
+              <span className="legend-chip"><i className="legend-swatch gray-swatch" /> Gray: Healthy Tissue</span>
+            </div>
+            {localization?.quadrant && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 11, paddingTop: 6, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                <div><small style={{ color: "var(--neutral-400)", display: "block" }}>FOCAL REGION</small><b>{localization.quadrant}</b></div>
+                <div><small style={{ color: "var(--neutral-400)", display: "block" }}>EST. EXTENT</small><b>{localization.coverage_pct}% of scan</b></div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="xai-normal-badge">Normal Scan Baseline: Homogeneous cerebral distribution, no focal mass detected.</div>
+        )}
+      </div>
+
+      <div className="viewer-meta"><span><b>FILE</b>{name || "MRI scan"}</span><span><b>EXPLAINABILITY</b>Grad-CAM (Red Focus)</span><span><b>STATUS</b><i /> Processed</span></div>
+    </motion.section>
     <motion.section className="report-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }}><div className={`diagnosis ${danger ? "danger" : "success"}`}><span className="diagnosis-icon">{danger ? <Activity /> : <CheckCircle2 />}</span><div><small>MODEL PREDICTION</small><h2>{danger ? "Abnormality Detected" : "No Tumor Detected"}</h2><p>{prediction || (danger ? "The model classified this scan as showing an abnormality." : "The model classified this scan as normal.")}</p></div></div>
       {symptoms && danger && (
         <div style={{ margin: "14px 0", padding: "12px 14px", background: "rgba(224, 122, 122, 0.07)", border: "1px solid rgba(224, 122, 122, 0.2)", borderRadius: 12 }}>

@@ -17,12 +17,18 @@ The project features a Convolutional Neural Network (CNN) built with TensorFlow/
    - **Home (`/` or `/first`)**: Landing hero with medical imaging intelligence overview.
    - **Login (`/login`)**: Secure session authentication.
    - **Diagnostic Workspace (`/index`)**: Drag-and-drop MRI scan uploader with live preview, laser scanner animation, and 3-step pipeline checklist.
-   - **Diagnostic Report (`/upload`)**: Processing viewer HUD with animated scan beam, classification diagnosis (Tumor / Normal), clinical symptoms, and animated SVG confidence gauge.
-   - **Model Performance (`/performance`)**: Key performance metrics (Accuracy 97.7%, Precision 96.8%, Recall 97.5%, F-Measure 97.1%) and interactive Confusion Matrix.
+   - **Diagnostic Report (`/upload`)**: Processing viewer HUD with multi-mode view switcher, classification diagnosis (Tumor / Normal), clinical symptoms, and animated SVG confidence gauge.
+   - **Model Performance (`/performance`)**: Key performance metrics (Accuracy 97.4%, Precision 99.4%, Recall 96.3%, F-Measure 97.8%) and interactive Confusion Matrix.
    - **Dataset Intelligence (`/chart`)**: Composition analysis and interactive donut distribution chart (161 Tumor scans vs 104 Normal scans).
 
-3. **REST API Endpoints**:
-   - `POST /api/predict`: Multipart/form-data or JSON base64 inference endpoint.
+3. **Explainable AI (Grad-CAM) & Red Tumor Localization**:
+   - **Gradient-weighted Class Activation Mapping (Grad-CAM)**: Backpropagates gradients from the un-saturated tumor logit into the MobileNetV2 `out_relu` convolutional feature maps to locate the tumor.
+   - **Red Tumor Showcase Overlay**: Prominently highlights the identified tumor area in **vivid red** with a glowing boundary contour for immediate, unambiguous identification.
+   - **Multi-View Interactive Switcher**: Instant switching between **Tumor Focus (Red)**, **Heatmap Spectrum (Thermal Jet)**, and **Original MRI Scan**.
+   - **Spatial Metrics**: Computes focal region quadrant (e.g. Upper Left Region), estimated lesion coverage area (% of scan), and peak activation intensity.
+
+4. **REST API Endpoints**:
+   - `POST /api/predict`: Multipart/form-data or JSON base64 inference endpoint returning prediction, confidence, symptoms, Grad-CAM red overlay, thermal heatmap, and localization coordinates.
    - `GET /api/metrics`: Performance metrics and confusion matrix data in JSON format.
    - `GET /api/health`: Health status and model readiness.
 

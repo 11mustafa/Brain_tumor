@@ -30,12 +30,49 @@
         <div class="viewer-code">NS · 01</div>
       </div>
 
+      <!-- Grad-CAM Interactive View Switcher -->
+      <div class="gradcam-view-bar">
+        <span class="view-label">VIEW MODE:</span>
+        <div class="view-buttons" role="tablist">
+          {% if gradcam_red %}
+          <button type="button" class="view-btn {% if danger == 'danger' %}active{% endif %}" id="btnViewRed" onclick="switchScanView('red')">
+            <span class="btn-dot dot-red"></span> Tumor Focus (Red)
+          </button>
+          {% endif %}
+          {% if gradcam_jet %}
+          <button type="button" class="view-btn" id="btnViewJet" onclick="switchScanView('jet')">
+            <span class="btn-dot dot-jet"></span> Heatmap Spectrum
+          </button>
+          {% endif %}
+          <button type="button" class="view-btn {% if danger != 'danger' or not gradcam_red %}active{% endif %}" id="btnViewOrig" onclick="switchScanView('orig')">
+            <span class="btn-dot dot-orig"></span> Original MRI
+          </button>
+        </div>
+      </div>
+
       <div class="scanner-viewport">
-        {% if processed_file %}
-        <img src="data:image/png;base64,{{ processed_file }}" alt="Processed brain MRI scan">
-        {% else %}
-        <img src="{{ url_for('static', filename='images/neuroscan-hero.jpg') }}" alt="Default brain MRI scan">
+        {% if gradcam_red %}
+        <img id="scanRed" class="scan-layer {% if danger == 'danger' %}visible{% else %}hidden{% endif %}" src="data:image/png;base64,{{ gradcam_red }}" alt="Grad-CAM Red Tumor Localization">
         {% endif %}
+        {% if gradcam_jet %}
+        <img id="scanJet" class="scan-layer hidden" src="data:image/png;base64,{{ gradcam_jet }}" alt="Grad-CAM Thermal Heatmap Spectrum">
+        {% endif %}
+        {% if processed_file %}
+        <img id="scanOrig" class="scan-layer {% if danger != 'danger' or not gradcam_red %}visible{% else %}hidden{% endif %}" src="data:image/png;base64,{{ processed_file }}" alt="Original Processed Brain MRI Scan">
+        {% else %}
+        <img id="scanOrig" class="scan-layer visible" src="{{ url_for('static', filename='images/neuroscan-hero.jpg') }}" alt="Default Brain MRI Scan">
+        {% endif %}
+
+        {% if danger == 'danger' and gradcam_red %}
+        <div class="gradcam-badge-tag red-tag" id="viewTag">
+          <span class="pulse-circle"></span> GRAD-CAM: TUMOR AREA LOCALIZED (RED)
+        </div>
+        {% elif gradcam_red %}
+        <div class="gradcam-badge-tag green-tag" id="viewTag">
+          GRAD-CAM: UNIFORM BASELINE (NO FOCAL LESION)
+        </div>
+        {% endif %}
+
         <div class="scanner-grid"></div>
         <div class="scanner-line"></div>
         <i class="corner tl"></i>
@@ -44,9 +81,52 @@
         <i class="corner br"></i>
       </div>
 
+      <!-- Grad-CAM Explainable AI Localization Details -->
+      <div class="gradcam-info-card">
+        <div class="xai-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <h4>Grad-CAM Explainable AI Localization</h4>
+        </div>
+        <p class="xai-desc">
+          Gradient-weighted Class Activation Mapping backpropagated through MobileNetV2 convolutional feature maps identifies the focal regions influencing the model's prediction.
+        </p>
+
+        {% if danger == 'danger' %}
+        <div class="gradcam-legend">
+          <span class="legend-chip chip-red"><i class="legend-swatch red-swatch"></i> Red Area: Identified Tumor Tissue</span>
+          <span class="legend-chip"><i class="legend-swatch gray-swatch"></i> Grayscale: Healthy Brain Parenchyma</span>
+        </div>
+
+        {% if localization and localization.quadrant %}
+        <div class="xai-metrics-grid">
+          <div class="xai-metric-item">
+            <small>FOCAL REGION</small>
+            <b>{{ localization.quadrant }}</b>
+          </div>
+          <div class="xai-metric-item">
+            <small>EST. TUMOR EXTENT</small>
+            <b>{{ localization.coverage_pct }}% of scan</b>
+          </div>
+          <div class="xai-metric-item">
+            <small>PEAK ACTIVATION</small>
+            <b>{{ localization.max_activation }}</b>
+          </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="xai-normal-badge">
+          <span>Normal Scan Baseline: Feature activations show homogeneous cerebral distribution with no abnormal neoplastic clustering.</span>
+        </div>
+        {% endif %}
+      </div>
+
       <div class="viewer-meta">
         <span><b>SCAN STATUS</b>Processed</span>
-        <span><b>PIPELINE</b>CNN Classification</span>
+        <span><b>EXPLAINABILITY</b>Grad-CAM (Red Focus)</span>
         <span><b>ENGINE</b><i></i> TensorFlow / Keras</span>
       </div>
     </section>
@@ -147,6 +227,50 @@
       }, 100);
     }
   });
+
+  function switchScanView(mode) {
+    const scanRed = document.getElementById('scanRed');
+    const scanJet = document.getElementById('scanJet');
+    const scanOrig = document.getElementById('scanOrig');
+    const btnRed = document.getElementById('btnViewRed');
+    const btnJet = document.getElementById('btnViewJet');
+    const btnOrig = document.getElementById('btnViewOrig');
+    const viewTag = document.getElementById('viewTag');
+
+    [btnRed, btnJet, btnOrig].forEach(b => b && b.classList.remove('active'));
+    [scanRed, scanJet, scanOrig].forEach(img => {
+      if (img) {
+        img.classList.remove('visible');
+        img.classList.add('hidden');
+      }
+    });
+
+    if (mode === 'red' && scanRed) {
+      scanRed.classList.remove('hidden');
+      scanRed.classList.add('visible');
+      if (btnRed) btnRed.classList.add('active');
+      if (viewTag) {
+        viewTag.innerHTML = '<span class="pulse-circle"></span> GRAD-CAM: TUMOR AREA LOCALIZED (RED)';
+        viewTag.className = 'gradcam-badge-tag red-tag';
+      }
+    } else if (mode === 'jet' && scanJet) {
+      scanJet.classList.remove('hidden');
+      scanJet.classList.add('visible');
+      if (btnJet) btnJet.classList.add('active');
+      if (viewTag) {
+        viewTag.innerHTML = 'GRAD-CAM: THERMAL ACTIVATION SPECTRUM';
+        viewTag.className = 'gradcam-badge-tag jet-tag';
+      }
+    } else if (scanOrig) {
+      scanOrig.classList.remove('hidden');
+      scanOrig.classList.add('visible');
+      if (btnOrig) btnOrig.classList.add('active');
+      if (viewTag) {
+        viewTag.innerHTML = 'ORIGINAL UNPROCESSED MRI SCAN';
+        viewTag.className = 'gradcam-badge-tag orig-tag';
+      }
+    }
+  }
 </script>
 {% endblock %}
 

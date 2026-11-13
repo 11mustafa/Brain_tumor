@@ -13,7 +13,9 @@ def run_tests():
     assert 'Abnormality Detected' in html, 'Expected Abnormality Detected in HTML'
     assert 'Brain Tumor' in html, 'Expected Brain Tumor in HTML'
     assert 'data:image/png;base64,' in html, 'Expected base64 image in HTML'
-    print('Test 1 Passed: Tumor image correctly classified in HTML!')
+    assert 'Tumor Focus (Red)' in html, 'Expected Grad-CAM red focus button in HTML'
+    assert 'GRAD-CAM: TUMOR AREA LOCALIZED (RED)' in html, 'Expected Grad-CAM localized tumor tag in HTML'
+    print('Test 1 Passed: Tumor image correctly classified with Grad-CAM red localization in HTML!')
 
     print('=== Test 2: Upload Normal Image (Form) ===')
     with open('upload/Normal/image.png', 'rb') as f:
@@ -25,7 +27,7 @@ def run_tests():
     assert 'Normal' in html, 'Expected Normal in HTML'
     print('Test 2 Passed: Normal image correctly classified in HTML!')
 
-    print('=== Test 3: API Predict Tumor (JSON) ===')
+    print('=== Test 3: API Predict Tumor (JSON) with Grad-CAM ===')
     with open('upload/Brain Tumor/image.png', 'rb') as f:
         data = {'file': (io.BytesIO(f.read()), 'tumor_test.png')}
         r = client.post('/api/predict', data=data, content_type='multipart/form-data', headers={'Accept': 'application/json'})
@@ -34,7 +36,10 @@ def run_tests():
     assert res['success'] == True
     assert res['is_tumor'] == True
     assert 'Brain Tumor' in res['prediction']
+    assert res.get('gradcam_red') is not None, 'Expected gradcam_red in JSON response'
+    assert res.get('localization') is not None, 'Expected localization in JSON response'
     print(f"Test 3 Passed! API JSON response: {res['prediction']} ({res['confidence']}%)")
+    print(f"  Grad-CAM localized tumor region: {res['localization'].get('quadrant')} (Peak: {res['localization'].get('max_activation')})")
 
     print('=== Test 4: API Predict Normal (JSON) ===')
     with open('upload/Normal/image.png', 'rb') as f:

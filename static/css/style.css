@@ -1203,6 +1203,263 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   margin-bottom: 5px;
 }
 
+/* ==========================================================================
+   Grad-CAM Explainable AI & Tumor Red Localization Controls
+   ========================================================================== */
+.gradcam-view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.view-label {
+  font: 600 10px 'Outfit', sans-serif;
+  color: var(--neutral-400);
+  letter-spacing: 1px;
+}
+
+.view-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(18, 24, 38, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--neutral-300);
+  font: 500 11px 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+  background: rgba(30, 41, 59, 0.9);
+  color: #fff;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.view-btn.active {
+  background: rgba(14, 165, 233, 0.15);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.25);
+}
+
+#btnViewRed.active {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
+  color: #fca5a5;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-red {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+.dot-jet {
+  background: linear-gradient(135deg, #0284c7, #ef4444);
+}
+
+.dot-orig {
+  background: #94a3b8;
+}
+
+.scan-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.scan-layer.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.scan-layer.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.gradcam-badge-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 16px;
+  font: 600 10px 'Outfit', sans-serif;
+  letter-spacing: 0.8px;
+  backdrop-filter: blur(8px);
+}
+
+.gradcam-badge-tag.red-tag {
+  background: rgba(220, 38, 38, 0.88);
+  color: #ffffff;
+  border: 1px solid rgba(254, 202, 202, 0.4);
+  box-shadow: 0 0 16px rgba(220, 38, 38, 0.5);
+}
+
+.gradcam-badge-tag.green-tag {
+  background: rgba(16, 185, 129, 0.88);
+  color: #ffffff;
+  border: 1px solid rgba(167, 243, 208, 0.4);
+}
+
+.gradcam-badge-tag.jet-tag {
+  background: rgba(15, 23, 42, 0.88);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.gradcam-badge-tag.orig-tag {
+  background: rgba(15, 23, 42, 0.88);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.pulse-circle {
+  width: 7px;
+  height: 7px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-dot 1.4s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 8px #ffffff; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.gradcam-info-card {
+  margin-top: 18px;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 10px;
+}
+
+.xai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-cyan);
+  margin-bottom: 6px;
+}
+
+.xai-header h4 {
+  font: 600 13px 'Outfit', sans-serif;
+  letter-spacing: 0.5px;
+  margin: 0;
+  color: #e2e8f0;
+}
+
+.xai-desc {
+  font-size: 11px;
+  color: var(--neutral-400);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.gradcam-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--neutral-300);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.legend-chip.chip-red {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  font-weight: 500;
+}
+
+.legend-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.red-swatch {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+.gray-swatch {
+  background: #64748b;
+}
+
+.xai-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.xai-metric-item small {
+  display: block;
+  font: 600 9px 'Outfit', sans-serif;
+  color: var(--neutral-400);
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+
+.xai-metric-item b {
+  font: 600 12px 'Inter', sans-serif;
+  color: #f1f5f9;
+}
+
+.xai-normal-badge {
+  padding: 10px 14px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  color: #6ee7b7;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .report-panel {
   border-top: 1px solid var(--border);
   padding-top: 20px;
