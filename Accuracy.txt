@@ -1,0 +1,3 @@
+CNN (MobileNetV2 Transfer Learning Architecture)
+
+Accuracy score:  0.9736

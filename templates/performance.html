@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% set active_page = "performance" %}
+
+{% block title %}Model Performance | NeuroScan AI{% endblock %}
+
+{% block content %}
+<main class="page-main section-shell">
+  <div class="page-heading">
+    <div class="eyebrow">MODEL INTELLIGENCE / METRICS</div>
+    <h1>Performance overview</h1>
+    <p>A transparent view of the classification model's evaluation metrics on the brain tumor MRI validation dataset.</p>
+  </div>
+
+  <section class="metric-grid" aria-label="Model performance metrics">
+    <article class="metric-item">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2v2"></path>
+          <path d="M12 20v2"></path>
+          <path d="m4.93 4.93 1.41 1.41"></path>
+          <path d="m17.66 17.66 1.41 1.41"></path>
+          <path d="M2 12h2"></path>
+          <path d="M20 12h2"></path>
+        </svg>
+      </div>
+      <span>01</span>
+      <small>Accuracy</small>
+      <strong>97.7<sup>%</sup></strong>
+      <p>Overall correct classification rate across all test samples</p>
+      <div class="metric-bar">
+        <i style="width: 97.7%;"></i>
+      </div>
+    </article>
+
+    <article class="metric-item">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 18h8"></path>
+          <path d="M3 22h18"></path>
+          <path d="m14 22 3-3 3 3"></path>
+          <circle cx="10" cy="10" r="7"></circle>
+        </svg>
+      </div>
+      <span>02</span>
+      <small>Precision</small>
+      <strong>96.8<sup>%</sup></strong>
+      <p>Positive prediction reliability and low false positive rate</p>
+      <div class="metric-bar">
+        <i style="width: 96.8%;"></i>
+      </div>
+    </article>
+
+    <article class="metric-item">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+          <line x1="7" x2="17" y1="12" x2="12"/>
+        </svg>
+      </div>
+      <span>03</span>
+      <small>Recall</small>
+      <strong>97.5<sup>%</sup></strong>
+      <p>Sensitive positive case identification of true tumor scans</p>
+      <div class="metric-bar">
+        <i style="width: 97.5%;"></i>
+      </div>
+    </article>
+
+    <article class="metric-item">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <span>04</span>
+      <small>F-Measure</small>
+      <strong>97.1<sup>%</sup></strong>
+      <p>Harmonic balance between precision and sensitivity</p>
+      <div class="metric-bar">
+        <i style="width: 97.1%;"></i>
+      </div>
+    </article>
+  </section>
+
+  <section class="matrix-panel glass-panel">
+    <div class="matrix-copy">
+      <div class="eyebrow">CLASSIFICATION DETAIL</div>
+      <h2>Confusion matrix</h2>
+      <p>Visual breakdown of predicted classes against actual classes in the model evaluation set.</p>
+      <div class="matrix-legend">
+        <span><i class="high"></i> Higher count</span>
+        <span><i class="low"></i> Lower count</span>
+      </div>
+    </div>
+
+    <div class="matrix-visual" role="img" aria-label="Confusion matrix">
+      <span class="axis y">ACTUAL CLASS</span>
+      <div class="matrix-labels top">
+        <span>Tumor</span>
+        <span>Normal</span>
+      </div>
+      <div class="matrix-labels side">
+        <span>Tumor</span>
+        <span>Normal</span>
+      </div>
+      <div class="matrix-cells">
+        <div class="cell high">158</div>
+        <div class="cell low">3</div>
+        <div class="cell low">3</div>
+        <div class="cell high">101</div>
+      </div>
+      <span class="axis x">PREDICTED CLASS</span>
+    </div>
+  </section>
+</main>
+{% endblock %}
+

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% set active_page = "chart" %}
+
+{% block title %}Dataset Distribution | NeuroScan AI{% endblock %}
+
+{% block content %}
+<main class="page-main section-shell">
+  <div class="page-heading">
+    <div class="eyebrow">DATASET INTELLIGENCE / DISTRIBUTION</div>
+    <h1>Classification distribution</h1>
+    <p>A transparent breakdown of the dataset used to train and validate the NeuroScan deep learning model.</p>
+  </div>
+
+  <section class="chart-layout glass-panel">
+    <div class="chart-copy">
+      <div class="dataset-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+      </div>
+      <span>DATASET COMPOSITION</span>
+      <h2>Brain MRI classes</h2>
+      <p>A balanced dataset distribution supports rigorous feature extraction and unbiased generalization across tumor and normal categories.</p>
+
+      <div class="class-list">
+        <div>
+          <i class="tumor"></i>
+          <span>
+            <b>Brain Tumor (Positive)</b>
+            <small>Scans exhibiting tumor pathology</small>
+          </span>
+          <strong>161 <span style="font-size: 13px; color: var(--muted);">(60.8%)</span></strong>
+        </div>
+        <div>
+          <i class="normal"></i>
+          <span>
+            <b>Normal (Negative)</b>
+            <small>Healthy brain MRI scans</small>
+          </span>
+          <strong>104 <span style="font-size: 13px; color: var(--muted);">(39.2%)</span></strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="donut-area">
+      <div class="donut" role="img" aria-label="Brain Tumor 60.8 percent, Normal 39.2 percent">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+            <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+          </svg>
+          <b>265</b>
+          <span>TOTAL SCANS</span>
+        </div>
+      </div>
+      <div class="donut-legend">
+        <span><i class="tumor"></i> Brain Tumor (161 scans)</span>
+        <span><i class="normal"></i> Normal (104 scans)</span>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
+

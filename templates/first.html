@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% set active_page = "home" %}
+
+{% block title %}NeuroScan AI | Medical Imaging Intelligence{% endblock %}
+
+{% block content %}
+<main>
+  <section class="hero">
+    <div class="hero-image" aria-hidden="true"></div>
+    <div class="hero-vignette" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="eyebrow">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+        MEDICAL IMAGING INTELLIGENCE
+      </div>
+      <h1><span>NeuroScan AI</span><br>See deeper. Decide clearer.</h1>
+      <p>A refined deep-learning demonstration workspace for exploring brain MRI classification with speed, context, and
+        confidence.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="{{ url_for('index') }}">
+          Access workspace
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a class="button ghost" href="{{ url_for('performance') }}">
+          Explore model
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="scan-orbit" aria-hidden="true"><span></span><i></i></div>
+    <div class="scroll-cue" aria-hidden="true"><span></span> Explore platform</div>
+  </section>
+
+  <section class="features section-shell">
+    <div class="section-intro">
+      <div class="eyebrow">THE PLATFORM</div>
+      <h2>Intelligence at every step.</h2>
+      <p>Purpose-built tools turn a complex AI workflow into a calm, understandable experience.</p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-item">
+        <div class="feature-top">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="m12 14 4-4"></path>
+            <path d="M3.34 19a10 10 0 1 1 17.32 0"></path>
+          </svg>
+          <span>01</span>
+        </div>
+        <small>MODEL QUALITY</small>
+        <h3>High Accuracy</h3>
+        <p>Built to demonstrate robust deep-learning classification on brain MRI imagery with high sensitivity and
+          specificity.</p>
+      </article>
+
+      <article class="feature-item">
+        <div class="feature-top">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>02</span>
+        </div>
+        <small>WORKFLOW</small>
+        <h3>Real-time Processing</h3>
+        <p>A focused upload-to-result experience designed for clarity, instant inference speed, and seamless workflow.
+        </p>
+      </article>
+
+      <article class="feature-item">
+        <div class="feature-top">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M6 18h8"></path>
+            <path d="M3 22h18"></path>
+            <path d="m14 22 3-3 3 3"></path>
+            <circle cx="10" cy="10" r="7"></circle>
+          </svg>
+          <span>03</span>
+        </div>
+        <small>INSIGHT</small>
+        <h3>Detailed Analysis</h3>
+        <p>Review classification confidence, symptoms, and comprehensive model performance metrics in one workspace.</p>
+      </article>
+    </div>
+  </section>
+</main>
+{% endblock %}

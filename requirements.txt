@@ -1,0 +1,11 @@
+numpy
+Pillow
+tensorflow
+Flask
+flask-cors
+Werkzeug
+gunicorn
+kagglehub
+scikit-learn
+matplotlib
+seaborn
